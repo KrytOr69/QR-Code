@@ -232,30 +232,31 @@
         const textContainer = document.getElementById('textContainer');
         const p = document.querySelector('p');
 
-        // Charger le texte sauvegardé
-        if (localStorage.getItem('texte')) {
-            p.textContent = localStorage.getItem('texte');
+        // Charger les données sauvegardées au démarrage
+        function loadSavedData() {
+            // Charger le texte sauvegardé EN PREMIER
+            if (localStorage.getItem('texte')) {
+                p.textContent = localStorage.getItem('texte');
+            }
+
+            // Puis charger les styles
+            if (localStorage.getItem('textStyle')) {
+                p.setAttribute('style', localStorage.getItem('textStyle'));
+            }
+
+            // Charger la mise en page du texte sauvegardée
+            if (localStorage.getItem('textContainerStyle')) {
+                textContainer.setAttribute('style', localStorage.getItem('textContainerStyle'));
+            }
+
+            // Charger l'image sauvegardée
+            if (localStorage.getItem('imageData')) {
+                screenContent.style.backgroundImage = `url('${localStorage.getItem('imageData')}')`;
+            }
         }
 
-        // Charger la police sauvegardée
-        if (localStorage.getItem('fontFamily')) {
-            p.style.fontFamily = localStorage.getItem('fontFamily');
-        }
-
-        // Charger le style inline sauvegardé
-        if (localStorage.getItem('textStyle')) {
-            p.setAttribute('style', localStorage.getItem('textStyle'));
-        }
-
-        // Charger la mise en page du texte sauvegardée
-        if (localStorage.getItem('textContainerStyle')) {
-            textContainer.setAttribute('style', localStorage.getItem('textContainerStyle'));
-        }
-
-        // Charger l'image sauvegardée
-        if (localStorage.getItem('imageData')) {
-            screenContent.style.backgroundImage = `url('${localStorage.getItem('imageData')}')`;
-        }
+        // Charger les données quand la page charge
+        loadSavedData();
 
         // Gestion du changement d'image
         imageInput.addEventListener('change', function(e) {
@@ -272,23 +273,19 @@
             }
         });
 
-        // Sauvegarder le texte et les styles quand vous modifiez
+        // Sauvegarder quand on quitte la zone de texte (blur)
         p.addEventListener('blur', () => {
-            // Sauvegarde le texte
             localStorage.setItem('texte', p.textContent);
-            
-            // Sauvegarde la police
-            const computedStyle = window.getComputedStyle(p);
-            localStorage.setItem('fontFamily', computedStyle.fontFamily);
-            
-            // Sauvegarde tous les styles inline du texte
             localStorage.setItem('textStyle', p.getAttribute('style') || '');
         });
 
-        // Observer les changements de style du texte en temps réel
+        // Sauvegarder aussi à chaque keystroke (frappe de touche)
+        p.addEventListener('input', () => {
+            localStorage.setItem('texte', p.textContent);
+        });
+
+        // Observer les changements de style en temps réel
         const textObserver = new MutationObserver(() => {
-            const computedStyle = window.getComputedStyle(p);
-            localStorage.setItem('fontFamily', computedStyle.fontFamily);
             localStorage.setItem('textStyle', p.getAttribute('style') || '');
         });
 
@@ -309,8 +306,8 @@
             subtree: false
         });
 
-        // Sauvegarder la mise en page quand on click ailleurs (blur)
-        document.addEventListener('click', () => {
+        // Sauvegarder la mise en page en continu
+        document.addEventListener('mousemove', () => {
             localStorage.setItem('textContainerStyle', textContainer.getAttribute('style') || '');
         });
     </script>
