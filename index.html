@@ -25,6 +25,11 @@
         .controls {
             margin-bottom: 30px;
             text-align: center;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         .file-input-label {
@@ -44,6 +49,25 @@
 
         input[type="file"] {
             display: none;
+        }
+
+        .font-select-label {
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+            background: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            font-weight: 600;
+        }
+
+        .font-select-label select {
+            padding: 6px 8px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            background: white;
+            font-size: 14px;
         }
 
         .smartphone-frame {
@@ -184,6 +208,17 @@
             📸 Changer l'image
             <input type="file" id="imageInput" accept="image/*">
         </label>
+
+        <label class="font-select-label" title="Choisir le type de police">
+            Police :
+            <select id="fontSelect">
+                <option value="Arial, sans-serif" data-google="">Arial</option>
+                <option value="'Roboto', sans-serif" data-google="Roboto">Roboto (Google)</option>
+                <option value="'Open Sans', sans-serif" data-google="Open+Sans">Open Sans (Google)</option>
+                <option value="'Lora', serif" data-google="Lora">Lora (Google)</option>
+                <option value="'Courier New', monospace" data-google="">Monospace</option>
+            </select>
+        </label>
     </div>
 
     <div class="smartphone-frame">
@@ -193,7 +228,9 @@
                 <a href="https://www.instagram.com/kryt0r/" target="_blank" class="instagram-link" title="Suivez-moi sur Instagram">
                     <div class="instagram-icon">
                         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1 1 12.324 0 6.162 6.162 0 0 1-12.324 0zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm4.965-10.322a1.44 1.44 0 1 1 2.881.001 1.44 1.44 0 0 1-2.881-.001z"/>
+                            <rect x="3" y="3" width="18" height="18" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5" />
+                            <circle cx="12" cy="12" r="3" fill="white" />
+                            <circle cx="17.5" cy="6.5" r="0.9" fill="white" />
                         </svg>
                     </div>
                 </a>
@@ -205,6 +242,32 @@
         const imageInput = document.getElementById('imageInput');
         const screenContent = document.getElementById('screenContent');
         const p = document.querySelector('p');
+        const fontSelect = document.getElementById('fontSelect');
+
+        // Fonctions pour charger/sauvegarder la police
+        function setFont(fontValue, googleName) {
+            // Si une police Google est demandée, injecte ou met à jour le lien
+            const existingLink = document.getElementById('google-font-link');
+            if (googleName) {
+                const href = 'https://fonts.googleapis.com/css2?family=' + googleName + '&display=swap';
+                if (existingLink) {
+                    if (existingLink.href !== href) existingLink.href = href;
+                } else {
+                    const link = document.createElement('link');
+                    link.id = 'google-font-link';
+                    link.rel = 'stylesheet';
+                    link.href = href;
+                    document.head.appendChild(link);
+                }
+            } else if (existingLink) {
+                // retire le lien si la sélection n'est plus Google
+                existingLink.remove();
+            }
+
+            // Applique la police au body et au paragraphe éditable
+            document.body.style.fontFamily = fontValue;
+            if (p) p.style.fontFamily = fontValue;
+        }
 
         // Charger le texte sauvegardé
         if (localStorage.getItem('texte')) {
@@ -215,6 +278,22 @@
         if (localStorage.getItem('imageData')) {
             screenContent.style.backgroundImage = `url('${localStorage.getItem('imageData')}')`;
         }
+
+        // Charger la police sauvegardée
+        (function loadSavedFont() {
+            const savedFont = localStorage.getItem('fontFamily');
+            const savedGoogle = localStorage.getItem('googleFontName');
+            if (savedFont) {
+                setFont(savedFont, savedGoogle);
+                // sélectionne l'option correspondante dans le select si elle existe
+                for (const opt of fontSelect.options) {
+                    if (opt.value === savedFont) {
+                        opt.selected = true;
+                        break;
+                    }
+                }
+            }
+        })();
 
         // Gestion du changement d'image
         imageInput.addEventListener('change', function(e) {
@@ -234,6 +313,18 @@
         // Sauvegarder le texte quand vous modifiez
         p.addEventListener('blur', () => {
             localStorage.setItem('texte', p.textContent);
+        });
+
+        // Changement de police depuis l'UI
+        fontSelect.addEventListener('change', () => {
+            const opt = fontSelect.options[fontSelect.selectedIndex];
+            const fontValue = opt.value;
+            const googleName = opt.dataset.google || '';
+            // Sauvegarde la sélection
+            localStorage.setItem('fontFamily', fontValue);
+            if (googleName) localStorage.setItem('googleFontName', googleName);
+            else localStorage.removeItem('googleFontName');
+            setFont(fontValue, googleName);
         });
     </script>
 </body>
