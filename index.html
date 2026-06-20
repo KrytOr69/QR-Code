@@ -113,18 +113,7 @@
             overflow-x: hidden;
         }
 
-        /* Overlay semi-transparent pour meilleure lisibilité du texte */
-        .screen-content::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.3);
-            z-index: 1;
-            pointer-events: none;
-        }
+        /* Overlay removed so text has no background */
 
         .text-container {
             position: relative;
@@ -145,6 +134,7 @@
             white-space: normal;
             overflow-wrap: break-word;
             margin-bottom: 20px;
+            background: transparent; /* assure qu'il n'y ait pas de fond sur le texte */
         }
 
         .instagram-link {
@@ -182,10 +172,11 @@
             padding: 10px;
             border-radius: 5px;
             transition: background-color 0.3s;
+            background: transparent; /* aucune couleur de fond */
         }
 
         .editable:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: transparent; /* ne pas appliquer de fond au survol */
         }
 
         @media (max-width: 480px) {
