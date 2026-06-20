@@ -25,11 +25,6 @@
         .controls {
             margin-bottom: 30px;
             text-align: center;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
         }
 
         .file-input-label {
@@ -49,25 +44,6 @@
 
         input[type="file"] {
             display: none;
-        }
-
-        .font-select-label {
-            display: inline-flex;
-            gap: 8px;
-            align-items: center;
-            background: #fff;
-            padding: 8px 12px;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-            font-weight: 600;
-        }
-
-        .font-select-label select {
-            padding: 6px 8px;
-            border-radius: 6px;
-            border: 1px solid #ddd;
-            background: white;
-            font-size: 14px;
         }
 
         .smartphone-frame {
@@ -113,7 +89,18 @@
             overflow-x: hidden;
         }
 
-        /* Overlay removed so text has no background */
+        /* Overlay semi-transparent pour meilleure lisibilité du texte */
+        .screen-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+            pointer-events: none;
+        }
 
         .text-container {
             position: relative;
@@ -129,12 +116,22 @@
             color: white;
             font-size: 16px;
             line-height: 1.5;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+            /* contour: préférence WebKit + fallback par ombres pour autres navigateurs */
+            -webkit-text-stroke: 0.9px rgba(0,0,0,0.9);
+            text-shadow: 
+                -1px -1px 0 rgba(0,0,0,0.9),
+                 1px -1px 0 rgba(0,0,0,0.9),
+                -1px  1px 0 rgba(0,0,0,0.9),
+                 1px  1px 0 rgba(0,0,0,0.9),
+                -2px  0px 0 rgba(0,0,0,0.75),
+                 2px  0px 0 rgba(0,0,0,0.75),
+                 0px -2px 0 rgba(0,0,0,0.75),
+                 0px  2px 0 rgba(0,0,0,0.75);
+            line-height: 1.5;
             word-wrap: break-word;
             white-space: normal;
             overflow-wrap: break-word;
             margin-bottom: 20px;
-            background: transparent; /* assure qu'il n'y ait pas de fond sur le texte */
         }
 
         .instagram-link {
@@ -172,11 +169,17 @@
             padding: 10px;
             border-radius: 5px;
             transition: background-color 0.3s;
-            background: transparent; /* aucune couleur de fond */
+            /* applique aussi le contour au texte éditable */
+            -webkit-text-stroke: 0.9px rgba(0,0,0,0.9);
+            text-shadow: 
+                -1px -1px 0 rgba(0,0,0,0.9),
+                 1px -1px 0 rgba(0,0,0,0.9),
+                -1px  1px 0 rgba(0,0,0,0.9),
+                 1px  1px 0 rgba(0,0,0,0.9);
         }
 
         .editable:hover {
-            background-color: transparent; /* ne pas appliquer de fond au survol */
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         @media (max-width: 480px) {
@@ -199,17 +202,6 @@
             📸 Changer l'image
             <input type="file" id="imageInput" accept="image/*">
         </label>
-
-        <label class="font-select-label" title="Choisir le type de police">
-            Police :
-            <select id="fontSelect">
-                <option value="Arial, sans-serif" data-google="">Arial</option>
-                <option value="'Roboto', sans-serif" data-google="Roboto">Roboto (Google)</option>
-                <option value="'Open Sans', sans-serif" data-google="Open+Sans">Open Sans (Google)</option>
-                <option value="'Lora', serif" data-google="Lora">Lora (Google)</option>
-                <option value="'Courier New', monospace" data-google="">Monospace</option>
-            </select>
-        </label>
     </div>
 
     <div class="smartphone-frame">
@@ -219,9 +211,7 @@
                 <a href="https://www.instagram.com/kryt0r/" target="_blank" class="instagram-link" title="Suivez-moi sur Instagram">
                     <div class="instagram-icon">
                         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="3" y="3" width="18" height="18" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5" />
-                            <circle cx="12" cy="12" r="3" fill="white" />
-                            <circle cx="17.5" cy="6.5" r="0.9" fill="white" />
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919[...]"/>
                         </svg>
                     </div>
                 </a>
@@ -233,32 +223,6 @@
         const imageInput = document.getElementById('imageInput');
         const screenContent = document.getElementById('screenContent');
         const p = document.querySelector('p');
-        const fontSelect = document.getElementById('fontSelect');
-
-        // Fonctions pour charger/sauvegarder la police
-        function setFont(fontValue, googleName) {
-            // Si une police Google est demandée, injecte ou met à jour le lien
-            const existingLink = document.getElementById('google-font-link');
-            if (googleName) {
-                const href = 'https://fonts.googleapis.com/css2?family=' + googleName + '&display=swap';
-                if (existingLink) {
-                    if (existingLink.href !== href) existingLink.href = href;
-                } else {
-                    const link = document.createElement('link');
-                    link.id = 'google-font-link';
-                    link.rel = 'stylesheet';
-                    link.href = href;
-                    document.head.appendChild(link);
-                }
-            } else if (existingLink) {
-                // retire le lien si la sélection n'est plus Google
-                existingLink.remove();
-            }
-
-            // Applique la police au body et au paragraphe éditable
-            document.body.style.fontFamily = fontValue;
-            if (p) p.style.fontFamily = fontValue;
-        }
 
         // Charger le texte sauvegardé
         if (localStorage.getItem('texte')) {
@@ -269,22 +233,6 @@
         if (localStorage.getItem('imageData')) {
             screenContent.style.backgroundImage = `url('${localStorage.getItem('imageData')}')`;
         }
-
-        // Charger la police sauvegardée
-        (function loadSavedFont() {
-            const savedFont = localStorage.getItem('fontFamily');
-            const savedGoogle = localStorage.getItem('googleFontName');
-            if (savedFont) {
-                setFont(savedFont, savedGoogle);
-                // sélectionne l'option correspondante dans le select si elle existe
-                for (const opt of fontSelect.options) {
-                    if (opt.value === savedFont) {
-                        opt.selected = true;
-                        break;
-                    }
-                }
-            }
-        })();
 
         // Gestion du changement d'image
         imageInput.addEventListener('change', function(e) {
@@ -304,18 +252,6 @@
         // Sauvegarder le texte quand vous modifiez
         p.addEventListener('blur', () => {
             localStorage.setItem('texte', p.textContent);
-        });
-
-        // Changement de police depuis l'UI
-        fontSelect.addEventListener('change', () => {
-            const opt = fontSelect.options[fontSelect.selectedIndex];
-            const fontValue = opt.value;
-            const googleName = opt.dataset.google || '';
-            // Sauvegarde la sélection
-            localStorage.setItem('fontFamily', fontValue);
-            if (googleName) localStorage.setItem('googleFontName', googleName);
-            else localStorage.removeItem('googleFontName');
-            setFont(fontValue, googleName);
         });
     </script>
 </body>
