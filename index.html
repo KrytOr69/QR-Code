@@ -202,7 +202,7 @@
 
     <div class="smartphone-frame">
         <div class="screen-content" id="screenContent">
-            <div class="text-container">
+            <div class="text-container" id="textContainer">
                 <p contenteditable="true" class="editable">Votre texte ici. Double-cliquez pour modifier !</p>
                 <a href="https://www.instagram.com/kryt0r/" target="_blank" class="instagram-link" title="Suivez-moi sur Instagram">
                     <div class="instagram-icon" aria-hidden="true">
@@ -229,6 +229,7 @@
     <script>
         const imageInput = document.getElementById('imageInput');
         const screenContent = document.getElementById('screenContent');
+        const textContainer = document.getElementById('textContainer');
         const p = document.querySelector('p');
 
         // Charger le texte sauvegardé
@@ -244,6 +245,11 @@
         // Charger le style inline sauvegardé
         if (localStorage.getItem('textStyle')) {
             p.setAttribute('style', localStorage.getItem('textStyle'));
+        }
+
+        // Charger la mise en page du texte sauvegardée
+        if (localStorage.getItem('textContainerStyle')) {
+            textContainer.setAttribute('style', localStorage.getItem('textContainerStyle'));
         }
 
         // Charger l'image sauvegardée
@@ -275,21 +281,37 @@
             const computedStyle = window.getComputedStyle(p);
             localStorage.setItem('fontFamily', computedStyle.fontFamily);
             
-            // Sauvegarde tous les styles inline
+            // Sauvegarde tous les styles inline du texte
             localStorage.setItem('textStyle', p.getAttribute('style') || '');
         });
 
-        // Observer les changements de style en temps réel
-        const observer = new MutationObserver(() => {
+        // Observer les changements de style du texte en temps réel
+        const textObserver = new MutationObserver(() => {
             const computedStyle = window.getComputedStyle(p);
             localStorage.setItem('fontFamily', computedStyle.fontFamily);
             localStorage.setItem('textStyle', p.getAttribute('style') || '');
         });
 
-        observer.observe(p, {
+        textObserver.observe(p, {
             attributes: true,
             attributeFilter: ['style'],
             subtree: false
+        });
+
+        // Observer les changements de la mise en page (text-container)
+        const layoutObserver = new MutationObserver(() => {
+            localStorage.setItem('textContainerStyle', textContainer.getAttribute('style') || '');
+        });
+
+        layoutObserver.observe(textContainer, {
+            attributes: true,
+            attributeFilter: ['style'],
+            subtree: false
+        });
+
+        // Sauvegarder la mise en page quand on click ailleurs (blur)
+        document.addEventListener('click', () => {
+            localStorage.setItem('textContainerStyle', textContainer.getAttribute('style') || '');
         });
     </script>
 </body>
