@@ -3,86 +3,55 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ma page simple</title>
+  <title>Téléchargement simple</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; max-width: 900px; }
-    h1 { margin-bottom: 8px; }
-    .status { color: #0a7a2f; margin-bottom: 10px; }
-    img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
-    textarea {
-      width: 100%;
-      min-height: 260px;
-      font-size: 16px;
-      line-height: 1.5;
-      padding: 12px;
-      resize: vertical;
-      white-space: pre-wrap;
-    }
-    .row { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
-    button { padding: 10px 14px; cursor: pointer; }
+    body { font-family: Arial, sans-serif; margin: 20px; max-width: 900px; text-align: center; }
+    h1 { margin-bottom: 20px; }
+    .buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+    button { padding: 15px 30px; font-size: 16px; cursor: pointer; border: 2px solid #333; background: #f0f0f0; border-radius: 8px; }
+    button:hover { background: #ddd; }
   </style>
 </head>
 <body>
-  <h1>Mon texte</h1>
-  <div id="status" class="status">Prêt</div>
-
-  <!-- Si ton image existe dans le repo, mets son vrai nom ici -->
-  <img src="image.jpg" alt="Image" onerror="this.style.display='none'">
-
-  <textarea id="editor" placeholder="Écris ton texte ici..."></textarea>
-
-  <div class="row">
-    <button id="downloadBtn" type="button">Télécharger</button>
-    <button id="clearBtn" type="button">Effacer</button>
+  <h1>Télécharge ce que tu veux</h1>
+  
+  <div class="buttons">
+    <button id="downloadImage" type="button">📥 Télécharger image</button>
+    <button id="downloadTexte" type="button">📝 Télécharger texte</button>
+    <button id="downloadQR" type="button">🔲 Télécharger QR Code</button>
   </div>
 
   <script>
-    const STORAGE_KEY = "page_simple_text_v1";
-    const editor = document.getElementById("editor");
-    const status = document.getElementById("status");
-    const downloadBtn = document.getElementById("downloadBtn");
-    const clearBtn = document.getElementById("clearBtn");
+    const downloadImage = document.getElementById("downloadImage");
+    const downloadTexte = document.getElementById("downloadTexte");
+    const downloadQR = document.getElementById("downloadQR");
 
-    // Charge le texte déjà sauvegardé
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved !== null) editor.value = saved;
-
-    let timer;
-    function setStatus(msg) {
-      status.textContent = msg;
-      clearTimeout(timer);
-      timer = setTimeout(() => status.textContent = "Prêt", 1200);
-    }
-
-    // Sauvegarde auto pendant la frappe
-    editor.addEventListener("input", () => {
-      localStorage.setItem(STORAGE_KEY, editor.value);
-      setStatus("Sauvegardé ✅");
+    // Télécharger image
+    downloadImage.addEventListener("click", () => {
+      const link = document.createElement("a");
+      link.href = "image.jpg";
+      link.download = "mon-image.jpg";
+      link.click();
     });
 
-    // Sécurité en quittant la page
-    window.addEventListener("beforeunload", () => {
-      localStorage.setItem(STORAGE_KEY, editor.value);
+    // Télécharger texte
+    downloadTexte.addEventListener("click", () => {
+      const text = prompt("Écris le texte à télécharger :");
+      if (text !== null) {
+        const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "mon-texte.txt";
+        link.click();
+      }
     });
 
-    // Télécharger en .txt
-    downloadBtn.addEventListener("click", () => {
-      const blob = new Blob([editor.value], { type: "text/plain;charset=utf-8" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "mon-texte.txt";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(a.href);
-      setStatus("Téléchargé ✅");
-    });
-
-    // Effacer
-    clearBtn.addEventListener("click", () => {
-      editor.value = "";
-      localStorage.removeItem(STORAGE_KEY);
-      setStatus("Texte effacé");
+    // Télécharger QR Code
+    downloadQR.addEventListener("click", () => {
+      const link = document.createElement("a");
+      link.href = "qr-code.png";
+      link.download = "mon-qr-code.png";
+      link.click();
     });
   </script>
 </body>
