@@ -203,7 +203,7 @@
     <div class="smartphone-frame">
         <div class="screen-content" id="screenContent">
             <div class="text-container" id="textContainer">
-                <p contenteditable="true" class="editable">Votre texte ici. Double-cliquez pour modifier !</p>
+                <p contenteditable="true" class="editable"></p>
                 <a href="https://www.instagram.com/kryt0r/" target="_blank" class="instagram-link" title="Suivez-moi sur Instagram">
                     <div class="instagram-icon" aria-hidden="true">
                         <!-- Gradient Instagram-like icon -->
@@ -234,12 +234,16 @@
 
         // Charger les données sauvegardées au démarrage
         function loadSavedData() {
-            // Charger le texte sauvegardé EN PREMIER
-            if (localStorage.getItem('texte')) {
-                p.textContent = localStorage.getItem('texte');
+            // Charger le texte sauvegardé
+            const savedText = localStorage.getItem('texte');
+            if (savedText) {
+                p.textContent = savedText;
+            } else {
+                // Texte par défaut si rien n'est sauvegardé
+                p.textContent = 'Votre texte ici. Double-cliquez pour modifier !';
             }
 
-            // Puis charger les styles
+            // Charger les styles
             if (localStorage.getItem('textStyle')) {
                 p.setAttribute('style', localStorage.getItem('textStyle'));
             }
@@ -256,7 +260,7 @@
         }
 
         // Charger les données quand la page charge
-        loadSavedData();
+        window.addEventListener('DOMContentLoaded', loadSavedData);
 
         // Gestion du changement d'image
         imageInput.addEventListener('change', function(e) {
@@ -304,11 +308,6 @@
             attributes: true,
             attributeFilter: ['style'],
             subtree: false
-        });
-
-        // Sauvegarder la mise en page en continu
-        document.addEventListener('mousemove', () => {
-            localStorage.setItem('textContainerStyle', textContainer.getAttribute('style') || '');
         });
     </script>
 </body>
