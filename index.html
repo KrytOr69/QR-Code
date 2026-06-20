@@ -120,6 +120,7 @@
             color: #ffffff;
             font-size: 16px;
             line-height: 1.5;
+            font-family: 'Arial', sans-serif;
             /* Multiple strong shadows to create a professional outline and maximum depth */
             text-shadow:
               -2px -2px 0 rgba(0,0,0,1),
@@ -235,6 +236,16 @@
             p.textContent = localStorage.getItem('texte');
         }
 
+        // Charger la police sauvegardée
+        if (localStorage.getItem('fontFamily')) {
+            p.style.fontFamily = localStorage.getItem('fontFamily');
+        }
+
+        // Charger le style inline sauvegardé
+        if (localStorage.getItem('textStyle')) {
+            p.setAttribute('style', localStorage.getItem('textStyle'));
+        }
+
         // Charger l'image sauvegardée
         if (localStorage.getItem('imageData')) {
             screenContent.style.backgroundImage = `url('${localStorage.getItem('imageData')}')`;
@@ -255,9 +266,30 @@
             }
         });
 
-        // Sauvegarder le texte quand vous modifiez
+        // Sauvegarder le texte et les styles quand vous modifiez
         p.addEventListener('blur', () => {
+            // Sauvegarde le texte
             localStorage.setItem('texte', p.textContent);
+            
+            // Sauvegarde la police
+            const computedStyle = window.getComputedStyle(p);
+            localStorage.setItem('fontFamily', computedStyle.fontFamily);
+            
+            // Sauvegarde tous les styles inline
+            localStorage.setItem('textStyle', p.getAttribute('style') || '');
+        });
+
+        // Observer les changements de style en temps réel
+        const observer = new MutationObserver(() => {
+            const computedStyle = window.getComputedStyle(p);
+            localStorage.setItem('fontFamily', computedStyle.fontFamily);
+            localStorage.setItem('textStyle', p.getAttribute('style') || '');
+        });
+
+        observer.observe(p, {
+            attributes: true,
+            attributeFilter: ['style'],
+            subtree: false
         });
     </script>
 </body>
