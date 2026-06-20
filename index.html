@@ -13,11 +13,37 @@
 
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             background-color: #f0f0f0;
             font-family: 'Arial', sans-serif;
+            padding: 20px;
+        }
+
+        .controls {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #007AFF;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .file-input-label:hover {
+            background-color: #0051D5;
+        }
+
+        input[type="file"] {
+            display: none;
         }
 
         .smartphone-frame {
@@ -48,9 +74,9 @@
         .screen-content {
             width: 100%;
             height: 100%;
-            background-image: url('https://images.unsplash.com/photo-1557672172-298e090d0f80?w=400&h=800&fit=crop');
             background-size: cover;
             background-position: center;
+            background-color: #ccc;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -122,8 +148,15 @@
     </style>
 </head>
 <body>
+    <div class="controls">
+        <label class="file-input-label">
+            📸 Changer l'image
+            <input type="file" id="imageInput" accept="image/*">
+        </label>
+    </div>
+
     <div class="smartphone-frame">
-        <div class="screen-content">
+        <div class="screen-content" id="screenContent">
             <div class="text-container">
                 <h1 contenteditable="true" class="editable">Votre Titre</h1>
                 <p contenteditable="true" class="editable">Votre texte ici. Double-cliquez pour modifier !</p>
@@ -132,7 +165,8 @@
     </div>
 
     <script>
-        // Sauvegarde automatique du texte dans le navigateur
+        const imageInput = document.getElementById('imageInput');
+        const screenContent = document.getElementById('screenContent');
         const h1 = document.querySelector('h1');
         const p = document.querySelector('p');
 
@@ -144,7 +178,27 @@
             p.textContent = localStorage.getItem('texte');
         }
 
-        // Sauvegarder quand vous modifiez
+        // Charger l'image sauvegardée
+        if (localStorage.getItem('imageData')) {
+            screenContent.style.backgroundImage = `url('${localStorage.getItem('imageData')}')`;
+        }
+
+        // Gestion du changement d'image
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const imageData = event.target.result;
+                    screenContent.style.backgroundImage = `url('${imageData}')`;
+                    // Sauvegarde l'image en local
+                    localStorage.setItem('imageData', imageData);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Sauvegarder le texte quand vous modifiez
         h1.addEventListener('blur', () => {
             localStorage.setItem('titre', h1.textContent);
         });
