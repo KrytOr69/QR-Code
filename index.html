@@ -1,314 +1,85 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ma Page Personnalisée</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f0f0f0;
-            font-family: 'Arial', sans-serif;
-            padding: 20px;
-        }
-
-        .controls {
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .file-input-label {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #007AFF;
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-
-        .file-input-label:hover {
-            background-color: #0051D5;
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        .smartphone-frame {
-            /* Dimensions du smartphone */
-            width: 375px;
-            height: 812px;
-            border: 12px solid #000;
-            border-radius: 40px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            position: relative;
-        }
-
-        /* Encoche du smartphone (notch) */
-        .smartphone-frame::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150px;
-            height: 25px;
-            background-color: #000;
-            border-radius: 0 0 30px 30px;
-            z-index: 10;
-        }
-
-        .screen-content {
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            background-color: #ccc;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            /* réduire le padding-top pour rapprocher le texte du haut */
-            padding-top: 8px;
-            padding-left: 20px;
-            padding-right: 20px;
-            padding-bottom: 20px;
-            position: relative;
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
-
-        /* Remove any overlay pseudo-element that could hide the background or affect visibility */
-        .screen-content::before,
-        .screen-content::after {
-            display: none !important;
-            content: none !important;
-            background: transparent !important;
-            pointer-events: none !important;
-        }
-        .screen-content {
-            background-color: transparent !important; /* keep only the background image if set */
-        }
-
-        /* Positionner le conteneur de texte le plus haut possible, en évitant l'encoche */
-        .text-container {
-            position: absolute;
-            top: calc(env(safe-area-inset-top, 8px) + 4px); /* respecte l'encoche sur les appareils modernes */
-            left: 12px;
-            right: 12px;
-            z-index: 60; /* au dessus des autres éléments */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        /* Ombrages renforcés sur la police pour améliorer la lisibilité */
-        p, .editable {
-            color: #ffffff;
-            font-size: 16px;
-            line-height: 1.5;
-            font-family: 'Arial', sans-serif;
-            /* Multiple strong shadows to create a professional outline and maximum depth */
-            text-shadow:
-              -2px -2px 0 rgba(0,0,0,1),
-               2px -2px 0 rgba(0,0,0,1),
-              -2px  2px 0 rgba(0,0,0,1),
-               2px  2px 0 rgba(0,0,0,1),
-              -1px -1px 0 rgba(0,0,0,0.95),
-               1px -1px 0 rgba(0,0,0,0.95),
-              -1px  1px 0 rgba(0,0,0,0.95),
-               1px  1px 0 rgba(0,0,0,0.95),
-               0   2px 8px rgba(0,0,0,0.8),
-               0   4px 12px rgba(0,0,0,0.7),
-               0   6px 16px rgba(0,0,0,0.6),
-               0   8px 20px rgba(0,0,0,0.5);
-            word-wrap: break-word;
-            white-space: normal;
-            overflow-wrap: break-word;
-            margin-bottom: 20px;
-            background: transparent !important;
-        }
-
-        .instagram-link {
-            z-index: 61;
-            display: inline-block;
-        }
-
-        .instagram-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 6px;
-            text-decoration: none;
-            transition: transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-        }
-
-        .instagram-icon:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-        }
-
-        .instagram-icon svg {
-            width: 24px;
-            height: 24px;
-            display: block;
-        }
-
-        .editable:hover {
-            background-color: transparent !important;
-        }
-
-        @media (max-width: 480px) {
-            .smartphone-frame {
-                width: 100vw;
-                height: 100vh;
-                border: none;
-                border-radius: 0;
-            }
-
-            .smartphone-frame::before {
-                display: none;
-            }
-
-            /* sur mobile, laisser un petit espace pour la barre d'état */
-            .text-container { top: calc(env(safe-area-inset-top, 12px) + 4px); left: 12px; right: 12px; }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mon texte</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; max-width: 900px; }
+    h1 { margin-bottom: 8px; }
+    .status { color: #0a7a2f; margin-bottom: 10px; }
+    textarea {
+      width: 100%;
+      min-height: 260px;
+      font-size: 16px;
+      padding: 12px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      resize: vertical;
+    }
+    .row { margin-top: 10px; display: flex; gap: 8px; }
+    button { padding: 10px 14px; cursor: pointer; }
+  </style>
 </head>
 <body>
-    <div class="controls">
-        <label class="file-input-label">
-            📸 Changer l'image
-            <input type="file" id="imageInput" accept="image/*">
-        </label>
-    </div>
+  <h1>Écris ici</h1>
+  <div id="status" class="status">Prêt</div>
 
-    <div class="smartphone-frame">
-        <div class="screen-content" id="screenContent">
-            <div class="text-container" id="textContainer">
-                <p contenteditable="true" class="editable"></p>
-                <a href="https://www.instagram.com/kryt0r/" target="_blank" class="instagram-link" title="Suivez-moi sur Instagram">
-                    <div class="instagram-icon" aria-hidden="true">
-                        <!-- Gradient Instagram-like icon -->
-                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                            <defs>
-                                <linearGradient id="igGrad" x1="0" x2="1" y1="0" y2="1">
-                                    <stop offset="0" stop-color="#f09433" />
-                                    <stop offset="0.25" stop-color="#e6683c" />
-                                    <stop offset="0.5" stop-color="#dc2743" />
-                                    <stop offset="0.75" stop-color="#cc2366" />
-                                    <stop offset="1" stop-color="#bc1888" />
-                                </linearGradient>
-                            </defs>
-                            <rect x="0" y="0" width="24" height="24" rx="5" fill="url(#igGrad)" />
-                            <path d="M12 7.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6zm0 7.8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zM17.6 6.4a1.1 1.1 0 1 1 0-2.2 1.1 1.1 0 0 1 0 2.2zM7 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z" fill="white" />
-                        </svg>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
+  <textarea id="editor" placeholder="Écris ce que tu veux..."></textarea>
 
-    <script>
-        const imageInput = document.getElementById('imageInput');
-        const screenContent = document.getElementById('screenContent');
-        const textContainer = document.getElementById('textContainer');
-        const p = document.querySelector('p');
+  <div class="row">
+    <button id="downloadBtn" type="button">Télécharger mon texte</button>
+    <button id="clearBtn" type="button">Effacer</button>
+  </div>
 
-        // Charger les données sauvegardées au démarrage
-        function loadSavedData() {
-            // Charger le texte sauvegardé
-            const savedText = localStorage.getItem('texte');
-            if (savedText) {
-                p.textContent = savedText;
-            } else {
-                // Texte par défaut si rien n'est sauvegardé
-                p.textContent = 'Votre texte ici. Double-cliquez pour modifier !';
-            }
+  <script>
+    const STORAGE_KEY = "mon_texte_auto_v1";
+    const editor = document.getElementById("editor");
+    const status = document.getElementById("status");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const clearBtn = document.getElementById("clearBtn");
 
-            // Charger les styles
-            if (localStorage.getItem('textStyle')) {
-                p.setAttribute('style', localStorage.getItem('textStyle'));
-            }
+    // Charger au démarrage
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved !== null) editor.value = saved;
 
-            // Charger la mise en page du texte sauvegardée
-            if (localStorage.getItem('textContainerStyle')) {
-                textContainer.setAttribute('style', localStorage.getItem('textContainerStyle'));
-            }
+    let t;
+    function setStatus(msg) {
+      status.textContent = msg;
+      clearTimeout(t);
+      t = setTimeout(() => status.textContent = "Prêt", 1200);
+    }
 
-            // Charger l'image sauvegardée
-            if (localStorage.getItem('imageData')) {
-                screenContent.style.backgroundImage = `url('${localStorage.getItem('imageData')}')`;
-            }
-        }
+    // Sauvegarde auto à chaque frappe
+    editor.addEventListener("input", () => {
+      localStorage.setItem(STORAGE_KEY, editor.value);
+      setStatus("Sauvegardé automatiquement ✅");
+    });
 
-        // Charger les données quand la page charge
-        window.addEventListener('DOMContentLoaded', loadSavedData);
+    // Sécurité avant fermeture
+    window.addEventListener("beforeunload", () => {
+      localStorage.setItem(STORAGE_KEY, editor.value);
+    });
 
-        // Gestion du changement d'image
-        imageInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const imageData = event.target.result;
-                    screenContent.style.backgroundImage = `url('${imageData}')`;
-                    // Sauvegarde l'image en local
-                    localStorage.setItem('imageData', imageData);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+    // Télécharger en .txt
+    downloadBtn.addEventListener("click", () => {
+      const blob = new Blob([editor.value], { type: "text/plain;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "mon-texte.txt";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(a.href);
+      setStatus("Fichier téléchargé ✅");
+    });
 
-        // Sauvegarder quand on quitte la zone de texte (blur)
-        p.addEventListener('blur', () => {
-            localStorage.setItem('texte', p.textContent);
-            localStorage.setItem('textStyle', p.getAttribute('style') || '');
-        });
-
-        // Sauvegarder aussi à chaque keystroke (frappe de touche)
-        p.addEventListener('input', () => {
-            localStorage.setItem('texte', p.textContent);
-        });
-
-        // Observer les changements de style en temps réel
-        const textObserver = new MutationObserver(() => {
-            localStorage.setItem('textStyle', p.getAttribute('style') || '');
-        });
-
-        textObserver.observe(p, {
-            attributes: true,
-            attributeFilter: ['style'],
-            subtree: false
-        });
-
-        // Observer les changements de la mise en page (text-container)
-        const layoutObserver = new MutationObserver(() => {
-            localStorage.setItem('textContainerStyle', textContainer.getAttribute('style') || '');
-        });
-
-        layoutObserver.observe(textContainer, {
-            attributes: true,
-            attributeFilter: ['style'],
-            subtree: false
-        });
-    </script>
+    // Effacer
+    clearBtn.addEventListener("click", () => {
+      editor.value = "";
+      localStorage.removeItem(STORAGE_KEY);
+      setStatus("Texte effacé");
+    });
+  </script>
 </body>
 </html>
