@@ -83,6 +83,8 @@
             align-items: center;
             padding: 40px 20px;
             position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         /* Overlay semi-transparent pour meilleure lisibilité du texte */
@@ -95,22 +97,15 @@
             bottom: 0;
             background-color: rgba(0, 0, 0, 0.3);
             z-index: 1;
+            pointer-events: none;
         }
 
         .text-container {
             position: relative;
             z-index: 2;
             text-align: center;
+            width: 100%;
             max-width: 90%;
-        }
-
-        h1 {
-            color: white;
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            word-wrap: break-word;
         }
 
         p {
@@ -119,6 +114,8 @@
             line-height: 1.5;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
             word-wrap: break-word;
+            white-space: normal;
+            overflow-wrap: break-word;
         }
 
         /* Style pour éditer facilement */
@@ -158,7 +155,6 @@
     <div class="smartphone-frame">
         <div class="screen-content" id="screenContent">
             <div class="text-container">
-                <h1 contenteditable="true" class="editable">Votre Titre</h1>
                 <p contenteditable="true" class="editable">Votre texte ici. Double-cliquez pour modifier !</p>
             </div>
         </div>
@@ -167,13 +163,9 @@
     <script>
         const imageInput = document.getElementById('imageInput');
         const screenContent = document.getElementById('screenContent');
-        const h1 = document.querySelector('h1');
         const p = document.querySelector('p');
 
         // Charger le texte sauvegardé
-        if (localStorage.getItem('titre')) {
-            h1.textContent = localStorage.getItem('titre');
-        }
         if (localStorage.getItem('texte')) {
             p.textContent = localStorage.getItem('texte');
         }
@@ -199,10 +191,6 @@
         });
 
         // Sauvegarder le texte quand vous modifiez
-        h1.addEventListener('blur', () => {
-            localStorage.setItem('titre', h1.textContent);
-        });
-
         p.addEventListener('blur', () => {
             localStorage.setItem('texte', p.textContent);
         });
