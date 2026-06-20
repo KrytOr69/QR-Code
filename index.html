@@ -3,60 +3,64 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mon texte</title>
+  <title>Ma page simple</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; max-width: 900px; }
     h1 { margin-bottom: 8px; }
     .status { color: #0a7a2f; margin-bottom: 10px; }
+    img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
     textarea {
       width: 100%;
       min-height: 260px;
       font-size: 16px;
-      padding: 12px;
       line-height: 1.5;
-      white-space: pre-wrap;
+      padding: 12px;
       resize: vertical;
+      white-space: pre-wrap;
     }
-    .row { margin-top: 10px; display: flex; gap: 8px; }
+    .row { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
     button { padding: 10px 14px; cursor: pointer; }
   </style>
 </head>
 <body>
-  <h1>Écris ici</h1>
+  <h1>Mon texte</h1>
   <div id="status" class="status">Prêt</div>
 
-  <textarea id="editor" placeholder="Écris ce que tu veux..."></textarea>
+  <!-- Si ton image existe dans le repo, mets son vrai nom ici -->
+  <img src="image.jpg" alt="Image" onerror="this.style.display='none'">
+
+  <textarea id="editor" placeholder="Écris ton texte ici..."></textarea>
 
   <div class="row">
-    <button id="downloadBtn" type="button">Télécharger mon texte</button>
+    <button id="downloadBtn" type="button">Télécharger</button>
     <button id="clearBtn" type="button">Effacer</button>
   </div>
 
   <script>
-    const STORAGE_KEY = "mon_texte_auto_v1";
+    const STORAGE_KEY = "page_simple_text_v1";
     const editor = document.getElementById("editor");
     const status = document.getElementById("status");
     const downloadBtn = document.getElementById("downloadBtn");
     const clearBtn = document.getElementById("clearBtn");
 
-    // Charger au démarrage
+    // Charge le texte déjà sauvegardé
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved !== null) editor.value = saved;
 
-    let t;
+    let timer;
     function setStatus(msg) {
       status.textContent = msg;
-      clearTimeout(t);
-      t = setTimeout(() => status.textContent = "Prêt", 1200);
+      clearTimeout(timer);
+      timer = setTimeout(() => status.textContent = "Prêt", 1200);
     }
 
-    // Sauvegarde auto à chaque frappe
+    // Sauvegarde auto pendant la frappe
     editor.addEventListener("input", () => {
       localStorage.setItem(STORAGE_KEY, editor.value);
-      setStatus("Sauvegardé automatiquement ✅");
+      setStatus("Sauvegardé ✅");
     });
 
-    // Sécurité avant fermeture
+    // Sécurité en quittant la page
     window.addEventListener("beforeunload", () => {
       localStorage.setItem(STORAGE_KEY, editor.value);
     });
@@ -71,7 +75,7 @@
       a.click();
       a.remove();
       URL.revokeObjectURL(a.href);
-      setStatus("Fichier téléchargé ✅");
+      setStatus("Téléchargé ✅");
     });
 
     // Effacer
